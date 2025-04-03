@@ -7,53 +7,21 @@ PID PD[2];
 
 CAN can(PA_11, PA_12); // CANピンの設定
 
-/*-----------------------------角速度調整用------------------------------*/
-Ticker speed_tim; //* 角速度調整を周期的やるためのタイマーの宣言
-void speed();
-/*-----------------------------角速度調整用------------------------------*/
-
-/*------------------------------CAN送信の設定------------------------------*/
-CANMessage canMsgSend;
-Ticker ticker; // canを周期的やるためのタイマーの宣言
-void sendValues();
-/*------------------------------CAN送信の設定------------------------------*/
-
 UnbufferedSerial uart(PC_10, PC_11, 38400);
 SerialCtrl fep(uart);
 
 int main(){
-    rise_fall(); // エンコーダーの立ち上がり立ち下がりの設定
-    setPwm_period(); // pwmの周期の設定
-
-    /*------------------------------canの設定（初期化含む）------------------------------*/
-    can.frequency(1000000);
-    can.mode(CAN::Normal);
-    ticker.attach(&sendValues,700us);
-    speed_tim.attach(&speed, 1ms);
-    canMsgSend.id = 0x01;  // ID設定
-    canMsgSend.len = 7;     // 3バイトデータ
-    for (int i = 0; i < 7; i++) {
-        canMsgSend.data[i] = 0;
-    }
-    /*------------------------------canの設定（初期化含む）------------------------------*/
-
     /*-----------------------------変数の宣言------------------------------*/
-    float R[2];
-    float L;
-    double goal[2] = {0, 0};
-    float output[2] = {0, 0};
-    double real_pwm[2] = {0, 0};
-    int digital[2] = {2, 2};
     float X = 0;
     float Y = 0;
-    float G = 0;
-    float rad = 0;
     send.FAIL = 0;
     send.mode = 0;
     
     bool loop = true; // ループ設定用のフラグ
     int fail = 0; //ループ内のカウンターの初期化
     /*-----------------------------変数の宣言------------------------------*/
+
+    preparation();
 
     while (loop){
         if (fep.tryReceive()) {
@@ -63,42 +31,14 @@ int main(){
                 initial_set();
             } else {
                 rad = ((2 * M_PI / 8192.0) * -enc[0].enc_count) - M_PI;
-                
-                //X
-                if (fep.getData(DualShock4::RX) >= 122 && fep.getData(DualShock4::RX) <= 132) {
-                    R[0] = 0; // ニュートラルの設定
-                } else {
-                    R[0] = (float(fep.getData(DualShock4::RX)) - 128) * (-1) / 128 ; // 回転速度の設定
-                }
 
-                //Y
-                if (fep.getData(DualShock4::RY) >= 122 && fep.getData(DualShock4::RY) <= 132) { // ニュートラルの設定
-                    R[1] = 0;
-                } else {
-                    R[1] = (float(fep.getData(DualShock4::RY)) - 128) * (-1) / 128; // 回転速度の設定
-                }
-
-                //L
-                if (fep.getData(DualShock4::LY) >= 122 && fep.getData(DualShock4::LY) <= 132) {
-                    L = 0; // ニュートラルの設定
-                } else {
-                    L = (float(fep.getData(DualShock4::LY)) - 128) * (-1) / 128 ; // 回転速度の設定
-                }
-
-                send.RX = fep.getData(DualShock4::RX);
-                send.RY = fep.getData(DualShock4::RY);
-                send.LY = fep.getData(DualShock4::LY);
-                can.write(canMsgSend);
-                ThisThread::sleep_for(1ms);
+                setNeutral();
+                inputCAN_SticData();
 
                 X = (R[0]);
                 Y = (R[1]);
 
-                // 角速度(speed)を合わせる計算モーター２
-                output[1] = PD[1].PID_move(g_speed, c_speed);
-                goal[1] = MAXIN::fmin(MAXIN::fmax(output[1], 0.0), 1.0);
-                real_pwm[1] = -goal[1];
-                
+                calclation_PID_sub();
 
                 if (L != 0) {
                     //足回り回す
@@ -114,14 +54,7 @@ int main(){
                         pwm3 = 1;
                     } else {
                         G = (atan2f(Y, X));  
-
-                        // speedの元になる計算モーター１
-                        output[0] = PD[0].PD_move(G, rad); // そのままarctanを目標値に
-                        digital[0] = digitalWrite_f(G, rad);
-                        goal[0] = MAXIN::fmin((output[0] / 1.58), 1.0);
-                        real_pwm[0] = MAXIN::fmin(fabs(goal[0]), 1.0);
-
-                        printf("%d\n", digital[0]);
+                        calclation_PID_main();
 
                         if (digital[0] == 0) {
                             dig2 = 0;
@@ -152,6 +85,8 @@ int main(){
         }
     }
 }
+
+
 
 // /*------------------------------角速度取得 → 合わせに行く------------------------------*/
 void speed() { // 2->3合わせる
@@ -291,7 +226,6 @@ void initial_set() {
     prebtn[1] = currentButtonStat[1];  // ボタンの状態を取得
     prebtn[2] = currentButtonStat[2];  // ボタンの状態を取得
     prebtn[3] = currentButtonStat[3];  // ボタンの状態を取得
-    // printf("%d, %d, %d\n", send.mode, send.comp, send.goback);
     send.RX = fep.getData(DualShock4::RX);
     send.RY = fep.getData(DualShock4::RY);
     send.LY = fep.getData(DualShock4::LY);
@@ -302,6 +236,79 @@ void initial_set() {
 /*
 最初の角度をセットする関数に関してはもう少し練りたい
 */
+
+/*------------------------------ニュートラルの設定------------------------------*/
+void setNeutral() {
+    //X
+    if (fep.getData(DualShock4::RX) >= 122 && fep.getData(DualShock4::RX) <= 132) {
+        R[0] = 0; // ニュートラルの設定
+    } else {
+        R[0] = (float(fep.getData(DualShock4::RX)) - 128) * (-1) / 128 ; // 回転速度の設定
+    }
+
+    //Y
+    if (fep.getData(DualShock4::RY) >= 122 && fep.getData(DualShock4::RY) <= 132) { // ニュートラルの設定
+        R[1] = 0;
+    } else {
+        R[1] = (float(fep.getData(DualShock4::RY)) - 128) * (-1) / 128; // 回転速度の設定
+    }
+
+    //L
+    if (fep.getData(DualShock4::LY) >= 122 && fep.getData(DualShock4::LY) <= 132) {
+        L = 0; // ニュートラルの設定
+    } else {
+        L = (float(fep.getData(DualShock4::LY)) - 128) * (-1) / 128 ; // 回転速度の設定
+    }
+}
+/*------------------------------ニュートラルの設定------------------------------*/
+
+/*------------------------------canの設定（初期化含む）------------------------------*/
+void CAN_Setting() {
+    can.frequency(1000000);
+    can.mode(CAN::Normal);
+    ticker.attach(&sendValues,700us);
+    speed_tim.attach(&speed, 1ms);
+    canMsgSend.id = 0x01;  // ID設定
+    canMsgSend.len = 7;     // 3バイトデータ
+    for (int i = 0; i < 7; i++) {
+        canMsgSend.data[i] = 0;
+    }
+}
+/*------------------------------canの設定（初期化含む）------------------------------*/
+
+/*------------------------------スティックのデータを送る（CAN）------------------------------*/
+void inputCAN_SticData() {
+    send.RX = fep.getData(DualShock4::RX);
+    send.RY = fep.getData(DualShock4::RY);
+    send.LY = fep.getData(DualShock4::LY);
+    can.write(canMsgSend);
+    ThisThread::sleep_for(1ms);
+}
+/*------------------------------スティックのデータを送る（CAN）------------------------------*/
+
+/*------------------------------計算部分------------------------------*/
+//* 角度
+void calclation_PID_main() {
+    // speedの元になる計算モーター
+    output[0] = PD[0].PD_move(G, rad); // そのままarctanを目標値に
+    digital[0] = digitalWrite_f(G, rad);
+    goal[0] = MAXIN::fmin((output[0] / 1.58), 1.0);
+    real_pwm[0] = MAXIN::fmin(fabs(goal[0]), 1.0);
+}
+
+//* 速度
+void calclation_PID_sub() {
+    output[1] = PD[1].PID_move(g_speed, c_speed);
+    goal[1] = MAXIN::fmin(MAXIN::fmax(output[1], 0.0), 1.0);
+    real_pwm[1] = -goal[1];
+}
+/*------------------------------計算部分------------------------------*/
+
+void preparation() {
+    rise_fall(); // エンコーダーの立ち上がり立ち下がりの設定
+    setPwm_period(); // pwmの周期の設定
+    CAN_Setting();
+}
 
 void emergency_stop() {
     dig1 = 0;
