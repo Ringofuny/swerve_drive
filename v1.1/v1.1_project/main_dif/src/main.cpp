@@ -1,14 +1,10 @@
 #include "include_lib.h"
 #include "SerialCtrl_OS6/SerialCtrl.h"
 using namespace NITSC;
-
-PID PD[2];
-// menc enc[3];
-
-CAN can(PA_11, PA_12); // CANピンの設定
-
-UnbufferedSerial uart(PC_10, PC_11, 38400);
 SerialCtrl fep(uart);
+
+calclation_main::Calclation calc_main;
+calclation_sub::Calclation calc_sub;
 
 int main(){
     /*-----------------------------変数の宣言------------------------------*/
@@ -16,10 +12,8 @@ int main(){
     float Y = 0;
     send.FAIL = 0;
     send.mode = 0;
-    
     bool loop = true; // ループ設定用のフラグ
     int fail = 0; //ループ内のカウンターの初期化
-    /*-----------------------------変数の宣言------------------------------*/
 
     preparation();
 
@@ -30,7 +24,7 @@ int main(){
             if (!Mode) {
                 initial_set();
             } else {
-                rad = ((2 * M_PI / 8192.0) * -enc[0].enc_count) - M_PI;
+                calc_main.rad = ((2 * M_PI / 8192.0) * -enc[0].enc_count) - M_PI;
 
                 setNeutral();
                 inputCAN_SticData();
@@ -38,14 +32,14 @@ int main(){
                 X = (R[0]);
                 Y = (R[1]);
 
-                calclation_PID_sub();
+                calc_sub.my_output(calc_sub.g_speed, calc_sub.c_speed);
 
                 if (L != 0) {
                     //足回り回す
                     dig2 = L > 0 ? 1 : 0; // Lが0より大きいなら0を返しそうでなければ1を返す
                     pwm2 = ((L > 0 ? 1 : 0));
                     dig3 = (L < 0) ? 1 : 0; 
-                    pwm3 = (L < 0) ? 1-real_pwm[1] : real_pwm[1];
+                    pwm3 = (L < 0) ? 1-calc_sub.calclated_PWM() : calc_sub.calclated_PWM();
                 } else {            
                     if ((Y == 0 && X == 0)) {
                         dig2 = 0;
@@ -53,24 +47,25 @@ int main(){
                         pwm2 = 1;
                         pwm3 = 1;
                     } else {
-                        G = (atan2f(Y, X));  
-                        calclation_PID_main();
+                        calc_main.G = (atan2f(Y, X));  
+                        calc_main.my_output(calc_main.G, calc_main.rad);
+                        calc_main.digital = calc_main.my_digital(calc_main.G, calc_main.rad);
 
-                        if (digital[0] == 0) {
+                        if (calc_main.digital == 0) {
                             dig2 = 0;
                             dig3 = 0;
-                            pwm2 = 1-real_pwm[0];
-                            pwm3 = real_pwm[1];    
-                        } else if (digital[0] == 2) {
+                            pwm2 = 1-calc_main.calclated_PWM();
+                            pwm3 = calc_sub.calclated_PWM();    
+                        } else if (calc_main.digital == 2) {
                             dig2 = 0;
                             dig3 = 0;
                             pwm2 = 1;
                             pwm3 = 1;
-                        }  else if (digital[0] == 1) {
+                        }  else if (calc_main.digital == 1) {
                             dig2 = 1;
                             dig3 = 1;
-                            pwm2 = real_pwm[0];
-                            pwm3 = 1-real_pwm[1];
+                            pwm2 = calc_main.calclated_PWM();
+                            pwm3 = 1-calc_sub.calclated_PWM();
                         }
                     }
                 }
@@ -86,16 +81,13 @@ int main(){
     }
 }
 
-
-
 // /*------------------------------角速度取得 → 合わせに行く------------------------------*/
 void speed() { // 2->3合わせる
-    g_speed = ((2 * M_PI) * enc[1].enc_count) / (8192.0 * 0.01);
-    c_speed = ((2 * M_PI) * enc[2].enc_count) / (8192.0 * 0.01);
+    calc_sub.g_speed = ((2 * M_PI) * enc[1].enc_count) / (8192.0 * 0.01);
+    calc_sub.c_speed = ((2 * M_PI) * enc[2].enc_count) / (8192.0 * 0.01);
     enc[1].enc_count = 0;
     enc[2].enc_count = 0;
 }
-/*------------------------------角速度取得 → 合わせに行く------------------------------*/
 
 /*------------------------------モーターの周期の設定------------------------------*/
 void setPwm_period() {
@@ -106,7 +98,6 @@ void setPwm_period() {
     pwm5.period_us(83); //モータの周期の設定
     pwm6.period_us(83); //モータの周期の設定
 }
-/*------------------------------モーターの周期の設定------------------------------*/
 
 /*------------------------------立ち上がり立ち下がりの設定------------------------------*/
 void rise_fall() {
@@ -125,7 +116,6 @@ void rise_fall() {
     swi3_b.rise(callback(counter3_b_rise));
     swi3_b.fall(callback(counter3_b_fall));
 }
-/*------------------------------立ち上がり立ち下がりの設定------------------------------*/
 
 /*------------------------------CANメッセージの送信部分------------------------------*/
 void sendValues() {
@@ -146,7 +136,6 @@ void sendValues() {
     }
     // メッセージ送信            
 }
-/*------------------------------CANメッセージの送信部分------------------------------*/
 
 /*------------------------------最初の角度をセットする関数------------------------------*/
 void initial_set() {
@@ -232,7 +221,6 @@ void initial_set() {
     can.write(canMsgSend);
     ThisThread::sleep_for(1ms);
 }
-/*------------------------------最初の角度をセットする関数------------------------------*/
 /*
 最初の角度をセットする関数に関してはもう少し練りたい
 */
@@ -260,7 +248,6 @@ void setNeutral() {
         L = (float(fep.getData(DualShock4::LY)) - 128) * (-1) / 128 ; // 回転速度の設定
     }
 }
-/*------------------------------ニュートラルの設定------------------------------*/
 
 /*------------------------------canの設定（初期化含む）------------------------------*/
 void CAN_Setting() {
@@ -274,7 +261,6 @@ void CAN_Setting() {
         canMsgSend.data[i] = 0;
     }
 }
-/*------------------------------canの設定（初期化含む）------------------------------*/
 
 /*------------------------------スティックのデータを送る（CAN）------------------------------*/
 void inputCAN_SticData() {
@@ -284,25 +270,6 @@ void inputCAN_SticData() {
     can.write(canMsgSend);
     ThisThread::sleep_for(1ms);
 }
-/*------------------------------スティックのデータを送る（CAN）------------------------------*/
-
-/*------------------------------計算部分------------------------------*/
-//* 角度
-void calclation_PID_main() {
-    // speedの元になる計算モーター
-    output[0] = PD[0].PD_move(G, rad); // そのままarctanを目標値に
-    digital[0] = digitalWrite_f(G, rad);
-    goal[0] = MAXIN::fmin((output[0] / 1.58), 1.0);
-    real_pwm[0] = MAXIN::fmin(fabs(goal[0]), 1.0);
-}
-
-//* 速度
-void calclation_PID_sub() {
-    output[1] = PD[1].PID_move(g_speed, c_speed);
-    goal[1] = MAXIN::fmin(MAXIN::fmax(output[1], 0.0), 1.0);
-    real_pwm[1] = -goal[1];
-}
-/*------------------------------計算部分------------------------------*/
 
 void preparation() {
     rise_fall(); // エンコーダーの立ち上がり立ち下がりの設定
@@ -317,7 +284,6 @@ void emergency_stop() {
     dig4 = 0;
     dig5 = 0;
     dig6 = 0;
-
     pwm1 = 1;
     pwm2 = 1;
     pwm3 = 1;

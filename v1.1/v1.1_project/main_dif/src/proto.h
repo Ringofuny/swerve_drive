@@ -41,15 +41,4 @@ void CAN_Setting();
 void inputCAN_SticData();
 /*------------------------------スティックのデータを送る（CAN）------------------------------*/
 
-/*------------------------------計算部分------------------------------*/
-float G = 0;
-float rad = 0;
-double goal[2] = {0, 0};
-float output[2] = {0, 0};
-double real_pwm[2] = {0, 0};
-int digital[2] = {2, 2};
-void calclation_PID_main(); // 角度
-void calclation_PID_sub(); // 速度
-/*------------------------------計算部分------------------------------*/
-
 void preparation();

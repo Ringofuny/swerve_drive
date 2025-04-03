@@ -3,6 +3,10 @@
 #include "mbed.h"
 #include "my_encoder.h"
 
+CAN can(PA_11, PA_12); // CANピンの設定
+
+UnbufferedSerial uart(PC_10, PC_11, 38400);
+
 DigitalOut led1(PB_14);
 DigitalOut led2(PB_15);
 
