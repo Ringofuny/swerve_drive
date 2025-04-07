@@ -1,4 +1,5 @@
 #include "mbed.h"
+#include "rtos.h"
 
 // CAN ピン設定（STM32F446RE 用）
 CAN can(PA_11, PA_12, 1000000); // 1 Mbps
