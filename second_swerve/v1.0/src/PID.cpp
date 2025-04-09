@@ -44,6 +44,6 @@ float PID::PD_speed_angle(float g_angle, float c_angle, float g_speed, float c_s
 {
     angle_error = g_angle - c_angle;
     speed_error = g_speed - c_speed;
-    
+
     return ((angle_error * kp) + (speed_error * kd));
 }

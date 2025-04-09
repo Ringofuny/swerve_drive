@@ -6,6 +6,9 @@ using namespace NITSC;
 Gear tooth[2]; // 0→角度　1→速度
 #include "steer.h"
 Steer Steer_move;
+#include "counter.h"
+using namespace Exceeded;
+Count enc;
 
 CAN can(PA_11, PA_12); // CANピン設定（STM32F446REなど）
 
@@ -36,7 +39,10 @@ int main() {
     for (int i = 0; i < 8; i++) canMsgSend.data[i] = 0;
 
     canSend.attach(&sendV, 1ms);      // 1msごとに制御送信
-    PID_in.attach(&Angle_Speed, 700us);      // 1msごとに制御送信
+    PID_in.attach(&Angle_Speed, 1ms);      // 0.7msごとに制御送信
+
+    int pre_angle = 0;
+    // int error = 0;
 
     while (1) {
         if (fep.tryReceive()) {
@@ -44,8 +50,9 @@ int main() {
             Steer_move.SetData(R[0], R[1], L);
             if (can.read(canMsgReceive)) {
                 int16_t angle = canMsgReceive.data[0] << 8 | canMsgReceive.data[1];
-                g_angle = tooth[0].GearAngle_2(angle, 10, 20);
+                g_angle = angle;
             }
+            enc.Adjustment(pre_angle, g_angle);
             int16_t cur_val = fmap(output_current, -20, 20, -16384, 16384);
             int16_t rotate = -cur_val;
             canMsgSend.data[0] = cur_val >> 8;
@@ -53,7 +60,7 @@ int main() {
             canMsgSend.data[2] = rotate >> 8;
             canMsgSend.data[3] = rotate & 0xFF;
             for (int i = 4; i < 8; i++) canMsgSend.data[i] = 0;               
-            ThisThread::sleep_for(10ms);
+            ThisThread::sleep_for(1ms);
         }
     }
 }
