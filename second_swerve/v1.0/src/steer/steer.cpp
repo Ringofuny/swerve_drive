@@ -1,6 +1,4 @@
-#include "steer.h"
-#include "math.h"
-#include "PID.h" 
+#include "steer.h" 
 PID PD;
 
 wheel my_wheels[2] = {

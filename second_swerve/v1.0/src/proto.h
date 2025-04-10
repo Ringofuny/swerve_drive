@@ -13,3 +13,5 @@ float output_current = 0;
 float g_angle = 0;
 void Angle_Speed();
 Ticker PID_in;
+
+int pre_angle = 0;

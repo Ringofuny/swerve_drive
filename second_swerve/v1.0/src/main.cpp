@@ -11,7 +11,6 @@ int main() {
     canSend.attach(&sendV, 1ms);      // 1msごとに制御送信
     PID_in.attach(&Angle_Speed, 1ms); // 1msごとに制御送信
 
-    int pre_angle = 0;
 
     while (1) {
         if (fep.tryReceive()) {
@@ -21,7 +20,6 @@ int main() {
                 int16_t angle = canMsgReceive.data[0] << 8 | canMsgReceive.data[1];
                 g_angle = angle;
             }
-            enc.Adjustment(pre_angle, g_angle); // 変更予定あり（だいぶ悩んでる）
             int16_t cur_val = fmap(output_current, -20, 20, -16384, 16384);
             int16_t rotate = -cur_val;
             canMsgSend.data[0] = cur_val >> 8;
@@ -29,13 +27,14 @@ int main() {
             canMsgSend.data[2] = rotate >> 8;
             canMsgSend.data[3] = rotate & 0xFF;
             for (int i = 4; i < 8; i++) canMsgSend.data[i] = 0;               
+            pre_angle = g_angle;
             ThisThread::sleep_for(1ms);
         }
     }
 }
 
 void Angle_Speed() {
-    output_current = Steer_move.update(g_angle);
+    output_current = Steer_move.update(enc.Adjustment(pre_angle, g_angle));
 }
 
 void sendV() {
