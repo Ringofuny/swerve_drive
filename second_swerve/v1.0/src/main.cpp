@@ -1,34 +1,4 @@
-#include "mbed.h"
-#include "rtos.h"
-#include "SerialCtrl_OS6/SerialCtrl.h"
-using namespace NITSC;
-#include "gear.h"
-Gear tooth[2]; // 0→角度　1→速度
-#include "steer.h"
-Steer Steer_move;
-#include "counter.h"
-using namespace Exceeded;
-Count enc;
-
-CAN can(PA_11, PA_12); // CANピン設定（STM32F446REなど）
-
-UnbufferedSerial uart(PC_10, PC_11, 38400);
-SerialCtrl fep(uart);
-
-Ticker canSend;
-CANMessage canMsgSend;
-CANMessage canMsgReceive;
-
-int16_t fmap(double x, double in_min, double in_max, int16_t out_min, int16_t out_max);
-float R[2];
-float L;
-void setNeutral();
-void sendV();
-
-float output_current = 0;
-float g_angle = 0;
-void Angle_Speed();
-Ticker PID_in;
+#include "my_library.h"
 
 int main() {
     can.frequency(1000000);           // DJI ESCは1Mbps
@@ -39,14 +9,14 @@ int main() {
     for (int i = 0; i < 8; i++) canMsgSend.data[i] = 0;
 
     canSend.attach(&sendV, 1ms);      // 1msごとに制御送信
-    PID_in.attach(&Angle_Speed, 1ms);      // 0.7msごとに制御送信
+    PID_in.attach(&Angle_Speed, 1ms); // 1msごとに制御送信
 
     int pre_angle = 0;
     // int error = 0;
 
     while (1) {
         if (fep.tryReceive()) {
-            setNeutral();
+            settingCtrl();
             Steer_move.SetData(R[0], R[1], L);
             if (can.read(canMsgReceive)) {
                 int16_t angle = canMsgReceive.data[0] << 8 | canMsgReceive.data[1];
@@ -73,33 +43,12 @@ void sendV() {
     can.write(canMsgSend); 
 }
 
-int16_t fmap(double x, double in_min, double in_max, int16_t out_min, int16_t out_max) {
-    // 安全にクランプも入れる
-    if (x < in_min) x = in_min;
-    if (x > in_max) x = in_max;
-    return (int16_t)((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
-}
-
 /*------------------------------ニュートラルの設定------------------------------*/
-void setNeutral() {
+void settingCtrl() {
     //X
-    if (fep.getData(DualShock4::RX) >= 122 && fep.getData(DualShock4::RX) <= 132) {
-        R[0] = 0; // ニュートラルの設定
-    } else {
-        R[0] = (float(fep.getData(DualShock4::RX)) - 128) * (-1) / 128 ; // 回転速度の設定
-    }
-
-    //Y
-    if (fep.getData(DualShock4::RY) >= 122 && fep.getData(DualShock4::RY) <= 132) { // ニュートラルの設定
-        R[1] = 0;
-    } else {
-        R[1] = (float(fep.getData(DualShock4::RY)) - 128) * (-1) / 128; // 回転速度の設定
-    }
-
+    R[0] = ctrl[0].setNeutral(fep.getData(DualShock4::RX));
+    //Y 
+    R[1] = ctrl[1].setNeutral(fep.getData(DualShock4::RY));
     //L
-    if (fep.getData(DualShock4::LY) >= 122 && fep.getData(DualShock4::LY) <= 132) {
-        L = 0; // ニュートラルの設定
-    } else {
-        L = (float(fep.getData(DualShock4::LY)) - 128) * (-1) / 128 ; // 回転速度の設定
-    }
+    L = ctrl[2].setNeutral(fep.getData(DualShock4::LY));
 }
