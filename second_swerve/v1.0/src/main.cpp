@@ -12,7 +12,6 @@ int main() {
     PID_in.attach(&Angle_Speed, 1ms); // 1msごとに制御送信
 
     int pre_angle = 0;
-    // int error = 0;
 
     while (1) {
         if (fep.tryReceive()) {
@@ -22,7 +21,7 @@ int main() {
                 int16_t angle = canMsgReceive.data[0] << 8 | canMsgReceive.data[1];
                 g_angle = angle;
             }
-            enc.Adjustment(pre_angle, g_angle);
+            enc.Adjustment(pre_angle, g_angle); // 変更予定あり（だいぶ悩んでる）
             int16_t cur_val = fmap(output_current, -20, 20, -16384, 16384);
             int16_t rotate = -cur_val;
             canMsgSend.data[0] = cur_val >> 8;
