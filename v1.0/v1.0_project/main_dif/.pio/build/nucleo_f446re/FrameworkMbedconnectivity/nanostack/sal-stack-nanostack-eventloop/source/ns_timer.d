@@ -1,0 +1,14 @@
+.pio/build/nucleo_f446re/FrameworkMbedconnectivity/nanostack/sal-stack-nanostack-eventloop/source/ns_timer.o: \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack-eventloop/source/ns_timer.c \
+ .pio/build/nucleo_f446re/mbed_config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/ns_types.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/ns_list.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/ns_types.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack-eventloop/source/ns_timer.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack-eventloop/nanostack-event-loop/platform/eventloop_config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack-eventloop/nanostack-event-loop/eventOS_callback_timer.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/platform/arm_hal_interrupt.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack-eventloop/nanostack-event-loop/platform/arm_hal_timer.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack-eventloop/nanostack-event-loop/platform/eventloop_config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/nsdynmemLIB.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/nsdynmem_tracker.h

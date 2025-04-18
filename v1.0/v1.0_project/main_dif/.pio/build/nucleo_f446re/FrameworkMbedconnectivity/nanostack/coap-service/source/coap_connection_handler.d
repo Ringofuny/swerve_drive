@@ -1,0 +1,30 @@
+.pio/build/nucleo_f446re/FrameworkMbedconnectivity/nanostack/coap-service/source/coap_connection_handler.o: \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/coap-service/source/coap_connection_handler.c \
+ .pio/build/nucleo_f446re/mbed_config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/coap-service/source/include/coap_connection_handler.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack/nanostack/ns_address.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/ns_types.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/coap-service/source/include/coap_service_api_internal.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/coap-service/source/include/coap_message_handler.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/mbed-coap/mbed-coap/sn_coap_header.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/mbed-coap/mbed-coap/sn_config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/ns_list.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/ns_types.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/coap-service/source/include/coap_security_handler.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/mbedtls/include/mbedtls/version.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/mbedtls/include/mbedtls/config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/mbedtls/platform/inc/platform_mbed.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/mbedtls/include/mbedtls/config-no-entropy.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/mbedtls/include/mbedtls/check_config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/coap-service/source/include/coap_security_handler.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/mbed-trace/include/mbed-trace/ns_trace.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/mbed-trace/include/mbed-trace/mbed_trace.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/nsdynmemLIB.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/libraries/nanostack-libservice/mbed-client-libservice/nsdynmem_tracker.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack/nanostack/socket_api.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack/nanostack/ns_address.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack/nanostack/net_interface.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack/nanostack/platform/arm_hal_phy.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack-eventloop/nanostack-event-loop/eventOS_event_timer.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/sal-stack-nanostack-eventloop/nanostack-event-loop/eventOS_event.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nanostack/coap-service/source/include/coap_service_api_internal.h

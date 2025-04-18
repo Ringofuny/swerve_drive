@@ -1,0 +1,25 @@
+.pio/build/nucleo_f446re/FrameworkMbedconnectivity/netsocket/source/NetworkInterfaceDefaults.o: \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/source/NetworkInterfaceDefaults.cpp \
+ .pio/build/nucleo_f446re/mbed_config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/NetworkInterface.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/nsapi_types.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_toolchain.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_preprocessor.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/SocketAddress.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/nsapi_types.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/Callback.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_cstddef \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_new \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_assert.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_toolchain.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_type_traits \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_functional \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_memory \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_utility \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_iterator \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/DNS.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/EthInterface.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/WiFiInterface.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/WiFiAccessPoint.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/CellularInterface.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/netsocket/include/netsocket/MeshInterface.h

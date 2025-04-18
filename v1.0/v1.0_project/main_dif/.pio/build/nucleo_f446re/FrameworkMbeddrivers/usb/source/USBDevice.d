@@ -1,0 +1,26 @@
+.pio/build/nucleo_f446re/FrameworkMbeddrivers/usb/source/USBDevice.o: \
+ /Users/ringo/.platformio/packages/framework-mbed/drivers/usb/source/USBDevice.cpp \
+ .pio/build/nucleo_f446re/mbed_config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/drivers/usb/include/usb/internal/USBDevice.h \
+ /Users/ringo/.platformio/packages/framework-mbed/drivers/usb/include/usb/internal/USBDevice_Types.h \
+ /Users/ringo/.platformio/packages/framework-mbed/hal/usb/include/usb/USBPhy.h \
+ /Users/ringo/.platformio/packages/framework-mbed/hal/usb/include/usb/USBPhyTypes.h \
+ /Users/ringo/.platformio/packages/framework-mbed/hal/usb/include/usb/USBPhyEvents.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_critical.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/Callback.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_cstddef \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_new \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_assert.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_toolchain.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_preprocessor.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_type_traits \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_functional \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_memory \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_utility \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/cxxsupport/mstd_iterator \
+ /Users/ringo/.platformio/packages/framework-mbed/drivers/usb/include/usb/internal/USBDescriptor.h \
+ /Users/ringo/.platformio/packages/framework-mbed/hal/usb/include/usb/usb_phy_api.h \
+ /Users/ringo/.platformio/packages/framework-mbed/hal/usb/include/usb/USBPhy.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_assert.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_error.h \
+ /Users/ringo/.platformio/packages/framework-mbed/platform/include/platform/mbed_retarget.h

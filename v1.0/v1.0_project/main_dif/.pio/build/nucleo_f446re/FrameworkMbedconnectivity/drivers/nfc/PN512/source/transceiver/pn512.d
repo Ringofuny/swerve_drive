@@ -1,0 +1,30 @@
+.pio/build/nucleo_f446re/FrameworkMbedconnectivity/drivers/nfc/PN512/source/transceiver/pn512.o: \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512.c \
+ .pio/build/nucleo_f446re/mbed_config.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/nfc_errors.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/acore/acore/ac_buffer.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/transceiver/transceiver.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/nfc_common.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/nfc_errors.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/platform/nfc_debug.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/acore/acore/ac_macros.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/acore/acore/ac_buffer_reader.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/acore/acore/ac_buffer_builder.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/acore/acore/ac_stream.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/transceiver/protocols.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/platform/nfc_transport.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/platform/nfc_scheduler.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/transceiver/protocols.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_rf.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_types.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_callback.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_registers.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_cmd.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_hw.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_irq.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_poll.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_transceive.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/drivers/nfc/PN512/source/transceiver/pn512_internal.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/transceiver/transceiver_internal.h \
+ /Users/ringo/.platformio/packages/framework-mbed/connectivity/nfc/libraries/stack/transceiver/transceiver.h
