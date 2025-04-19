@@ -1,5 +1,8 @@
 #include "mbed.h"
 #include "rtos.h"
+#include "conversion.h"
+Conversion::Send_Data conv[4];
+Conversion::Available_Data C_Data[4];
 
 // CAN ピン設定（STM32F446RE 用）
 CAN can(PA_11, PA_12); // 1 Mbps
@@ -9,8 +12,9 @@ CANMessage canMsgSend;
 CANMessage canMsgReceive;
 
 void send_current() {
-    canMsgSend.data[0] = 0b00010011;
-    canMsgSend.data[1] = 0b10001000;
+    conv[0].update(C_Data[0].Become(5));
+    canMsgSend.data[0] = conv[0].High_Byte;
+    canMsgSend.data[1] = conv[0].Low_Byte;
     canMsgSend.data[2] = 0;
     canMsgSend.data[3] = 0;
     canMsgSend.data[4] = 0;
