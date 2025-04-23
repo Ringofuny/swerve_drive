@@ -1,52 +1,74 @@
 #include "my_library.h"
+#include "conversion.h"
+Conversion::Send_Data conv[4];
+Conversion::Available_Data C_Data[4];
+
+Ctrl Controler;
+
+int goal = 0;
+int current = 0;
+
+void send() {
+    can.write(canMsgSend);
+}
+
+void send_current() {           
+    // conv[0].update(C_Data[0].Become(0.2));  
+    canMsgSend.data[0] = conv[0].High_Byte;
+    canMsgSend.data[1] = conv[0].Low_Byte;
+    canMsgSend.data[2] = 0;
+    canMsgSend.data[3] = 0;
+    canMsgSend.data[4] = 0;
+    canMsgSend.data[5] = 0;
+    canMsgSend.data[6] = 0;
+    canMsgSend.data[7] = 0;
+}
 
 int main() {
     can.frequency(1000000);           // DJI ESCは1Mbps
     can.mode(CAN::Normal);
-
     canMsgSend.id = 0x200;            // DJI ESCの制御CAN ID（0x200）
     canMsgSend.len = 8;               // データ長8バイト（4台分）
     for (int i = 0; i < 8; i++) canMsgSend.data[i] = 0;
+    canSend.attach(&send_current, 10ms);
 
-    canSend.attach(&sendV, 1ms);      // 1msごとに制御送信
     PID_in.attach(&Angle_Speed, 1ms); // 1msごとに制御送信
 
 
     while (1) {
         if (fep.tryReceive()) {
             settingCtrl();
-            Steer_move.SetData(R[0], R[1], L);
+            send();
+            Steer_move.SetData(Controler.Data.R[0], Controler.Data.R[1], Controler.Data.L);
             if (can.read(canMsgReceive)) {
-                int16_t angle = canMsgReceive.data[0] << 8 | canMsgReceive.data[1];
-                g_angle = angle;
-            }
-            int16_t cur_val = fmap(output_current, -20, 20, -16384, 16384);
-            int16_t rotate = -cur_val;
-            canMsgSend.data[0] = cur_val >> 8;
-            canMsgSend.data[1] = cur_val & 0xFF;
-            canMsgSend.data[2] = rotate >> 8;
-            canMsgSend.data[3] = rotate & 0xFF;
-            for (int i = 4; i < 8; i++) canMsgSend.data[i] = 0;               
-            pre_angle = g_angle;
+                switch (canMsgReceive.id) 
+                {
+                case 0x201:
+                    current = (canMsgReceive.data[2] << 8 | canMsgReceive.data[3]);
+                    break;
+                
+                case 0x0202:
+                    goal = (canMsgReceive.data[2] << 8 | canMsgReceive.data[3]);
+                    break;
+                }
+            }     
+            printf("%f", output_current);         
             ThisThread::sleep_for(1ms);
         }
     }
 }
 
 void Angle_Speed() {
-    output_current = Steer_move.update(enc.Adjustment(pre_angle, g_angle));
-}
-
-void sendV() {
-    can.write(canMsgSend); 
+    Steer_move.goal_speed = goal;
+    output_current = Steer_move.update(current);
 }
 
 /*------------------------------ニュートラルの設定------------------------------*/
 void settingCtrl() {
     //X
-    R[0] = ctrl[0].setNeutral(fep.getData(DualShock4::RX));
+    Controler.Data.R[0] = ctrl[0].setNeutral(fep.getData(DualShock4::RX));
     //Y 
-    R[1] = ctrl[1].setNeutral(fep.getData(DualShock4::RY));
+    Controler.Data.R[1] = ctrl[1].setNeutral(fep.getData(DualShock4::RY));
     //L
-    L = ctrl[2].setNeutral(fep.getData(DualShock4::LY));
+    Controler.Data.L = ctrl[2].setNeutral(fep.getData(DualShock4::LY));
 }

@@ -3,19 +3,27 @@
 #define M_PI 3.14159265358979323846
 #endif
 #include "math.h"
-#include "PID/PID.h"
+#include "PID.h"
 
-struct wheel {
+typedef struct {
+    float R[2];
+    float L;
+} In;
+
+typedef struct {
+    In Data;
     float angle;
     float speed;
-};
-extern wheel my_wheels[2];
+} Ctrl;
+
+extern Ctrl my_wheels[2];
 
 class Steer {
     public:
         Steer();
         void SetData(float stX, float stY, float stY_L);
         float update(float CAN_Data_Count); 
+        int goal_speed;
     private:    
         float X[3];
         float Y[3];

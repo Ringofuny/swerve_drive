@@ -11,7 +11,7 @@ Conversion::Available_Data C_Data[4];
 CAN can(PA_11, PA_12); // 1 Mbps
 
 Ticker cansend;
-Ticker mti;
+// Ticker mti;
 CANMessage canMsgSend;
 CANMessage canMsgReceive;
 
@@ -44,7 +44,7 @@ int main() {
     canMsgSend.len = 8;               // データ長8バイト（4台分）
     for (int i = 0; i < 8; i++) canMsgSend.data[i] = 0;
     cansend.attach(&send_current, 10ms);
-    mti.attach(&my_time, 1s);
+    // mti.attach(&my_time, 1s);
     
     // int old = 0.0;
     int my_diff[2] = {0, 0};
