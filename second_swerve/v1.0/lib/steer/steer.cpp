@@ -4,6 +4,7 @@ PID PD[2];
 enum {target, current};
 
 Ctrl my_wheels[2] = {
+    // 初期化
     {0, 0},
     {0, 0}
 };
@@ -12,12 +13,16 @@ Steer::Steer() {
 }
 
 void Steer::SetData(float stX, float stY, float stY_L) {
+    // こっちの関数に値を渡す
     X[0] = stX;
     Y[0] = stY;
     L = stY_L;
 }
 
 float Steer::update(int CAN_Data_Count) { // rpm
+    /*-- 一番重要でPID制御の値を返す（角度）
+            角速度を渡して（ロボマスの２番目のデータ 配列でいうと[2], [3]番）floatで
+            処理済みのデータを返す */
     // 目標の角度
     X[1] = X[0];
     Y[1] = Y[0];
@@ -31,6 +36,7 @@ float Steer::update(int CAN_Data_Count) { // rpm
 }
 
 float Steer::speed(int rpm) {
+    // 速度を制御する予定
     my_wheels[target].speed = (goal_speed / 60.0) * (0.01); // 10ms 考える（多分かくどPDしてそこから速度の目標値出す）
     my_wheels[current].speed = (rpm / 60.0) * (0.01); // 10ms
     // 速度
@@ -38,6 +44,7 @@ float Steer::speed(int rpm) {
 }
 
 float Steer::normalize_angle(float angle_rad) {
+    // ラジアンを出す時に使う
     while (angle_rad > M_PI) angle_rad -= 2 * M_PI;
     while (angle_rad < -M_PI) angle_rad += 2 * M_PI;
     return angle_rad;

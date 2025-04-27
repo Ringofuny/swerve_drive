@@ -5,7 +5,7 @@ namespace Conversion {
     struct Send_Data {
         uint8_t High_Byte;
         uint8_t Low_Byte;
-        void update(int16_t Strength);
+       void update(int16_t Strength);
     };
 
     struct Available_Data {
