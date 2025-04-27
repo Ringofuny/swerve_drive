@@ -6,9 +6,9 @@
 class PID {
     public:  
         PID() {
-            kp = 0.3;
-            ki = 0.5;
-            kd = 0.35;
+            kp = 3000.0;
+            ki = 0.8;
+            kd = 300.0;
             goal = 0.0;
             current = 0.0;
             sum = 0.0;

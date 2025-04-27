@@ -13,7 +13,8 @@ typedef struct {
 typedef struct {
     In Data;
     float angle;
-    float speed;
+    float rad;
+    int speed;
 } Ctrl;
 
 extern Ctrl my_wheels[2];
@@ -22,7 +23,9 @@ class Steer {
     public:
         Steer();
         void SetData(float stX, float stY, float stY_L);
-        float update(float CAN_Data_Count); 
+        float update(int CAN_Data_Count); 
+        float speed(int rpm);
+        float normalize_angle(float angle_rad);
         int goal_speed;
     private:    
         float X[3];

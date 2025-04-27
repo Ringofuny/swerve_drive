@@ -1,14 +1,17 @@
 #ifndef PID_H
 #define PID_H
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 #include <stdio.h>
 
 class PID {
     public:  
         PID() {
-            kp = 0.05;
-            ki = 0.5;
-            kd = 1.0;
+            kp = 10.0f;   // 応答の速さ
+            ki = 0.0f;   // 積分項は最初オフ
+            kd = 2.2f;   // 減速のための微分項
             goal = 0.0;
             current = 0.0;
             sum = 0.0;
@@ -21,9 +24,11 @@ class PID {
         }
         float PID_move(float goal, float current);
         float PD_move(float goal, float current);
+        float PD_angle(int goal, int current);
         float P_move(float goal, float current);
         float PD_speed_angle(float g_angle, float c_angle, float g_speed, float c_speed);
-
+        float normalize_angle(float angle_rad);
+        float PID_angle(float goal, float current);
     private:
         float kp;
         float ki;
