@@ -8,7 +8,7 @@ float R[2];
 float L;
 void settingCtrl();
 
-float output_current = 0;
+float zoutput_current = 0;
 float g_angle = 0;
 void Angle_Speed();
 Ticker PID_in;

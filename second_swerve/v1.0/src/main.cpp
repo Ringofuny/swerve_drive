@@ -57,7 +57,7 @@ int main() {
                     current = (canMsgReceive.data[2] << 8 | canMsgReceive.data[3]); // データが半分に分けられて送られてくるので合体
                     break;
                 }
-                Steer_move.goal_speed = goal; // 速度調整の変数に目標値を渡す
+                Steer_move.goal_speed = 10.0; // 速度調整の変数に目標値を渡す
                 /*
                     conv[0].update(C_Data[0].Become(Steer_move.update(goal))); 
 
@@ -77,12 +77,12 @@ int main() {
                                            角速度を渡して（ロボマスの２番目のデータ 配列でいうと[2], [3]番）floatで
                                            処理済みのデータを返す
                 */
-                conv[0].update(C_Data[0].Become(Steer_move.update(goal)));  
+                conv[0].update(C_Data[0].Become(Steer_move.speed(goal)));  
                 conv[1].update(0);
             } else {
                 printf("KO");
             }
-            printf("%f, %d\n", Steer_move.update(goal), 0);         
+            printf("%f, %d\n", ((goal / 60.0) * (0.01)), C_Data[0].Become(Steer_move.speed(goal)));         
             ThisThread::sleep_for(10ms);
         } else {
             printf("No");

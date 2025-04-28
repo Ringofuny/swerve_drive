@@ -10,10 +10,17 @@ void Conversion::Send_Data::update(int16_t Strength) {
 }
 
 int16_t Conversion::Available_Data::Become(double Current) {
-    /* -- データをcanで送って制御できる形にして返す（int16_t）
-    -10(A) ~ 10(A) を -16384 ~ 16384 の間のデータに変換 */
-    calc = ((Current / 10.0) * 16384);
-    calc = std::round(calc);
+    /* -- データをCANで送って制御できる形にして返す（int16_t）
+        -10(A) ~ 10(A) を -16384 ~ 16384 の間のデータに変換 */
+
+    double scaled = (Current / 10.0) * 16384.0;
+    int32_t calc = static_cast<int32_t>(std::round(scaled));
+
+    // クリッピング
+    if (calc > 16384) calc = 16384;
+    if (calc < -16384) calc = -16384;
+
     Result = static_cast<int16_t>(calc);
     return Result;
 }
+
