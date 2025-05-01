@@ -42,7 +42,8 @@ int main() {
     while (1) { // 無限ループ
         if (fep.tryReceive()) { // 通信成功時
             // 関数に加工済みのコントローラーのデータを送る
-            Steer_move.SetData(Controler.Data.R[0], Controler.Data.R[1], Controler.Data.L);
+            Steer_move[0].SetData(Controler.Data.R[0], Controler.Data.R[1], Controler.Data.L);
+            Steer_move[1].SetData(Controler.Data.R[0], Controler.Data.R[1], Controler.Data.L);
             // send_current();
             send(); // canの送信（コードのどこでやるべきなんだろう）
             if (can.read(canMsgReceive)) { // can受信時
@@ -57,32 +58,33 @@ int main() {
                     current = (canMsgReceive.data[2] << 8 | canMsgReceive.data[3]); // データが半分に分けられて送られてくるので合体
                     break;
                 }
-                Steer_move.goal_speed = 10.0; // 速度調整の変数に目標値を渡す
                 /*
-                    conv[0].update(C_Data[0].Become(Steer_move.update(goal))); 
+                    *conv[0].update(C_Data[0].Become(Steer_move[0].update(goal))); 
 
                     convはconvertionの略
                     C_Dataはchange dataの略
-                    1 ---------------------------------------------------------------------------------------
+                    *1 ---------------------------------------------------------------------------------------
                     conv[0].update()    -- データを送信できる形にする関数（半分に分ける）
                     ex) [ 1001 0010 1111 1100 ] の時 [ 1001 0010 ](上位バイト)と[ 1111 1100 ](下位バイト)に分けて
                         それぞれ上位バイトは[ High_Byte ] に 下位バイトは[ Low_Byte ] に代入する
                     
-                    2 ---------------------------------------------------------------------------------------
+                    *2 ---------------------------------------------------------------------------------------
                     C_Data[0].Become()  -- データをcanで送って制御できる形にして返す（int16_t）
                                            -10(A) ~ 10(A) を -16384 ~ 16384 の間のデータに変換
                     
-                    3 ---------------------------------------------------------------------------------------
-                    Steer_move.update() -- 一番重要でPID制御の値を返す（角度）
+                    *3 ---------------------------------------------------------------------------------------
+                    Steer_move[0].update() -- 一番重要でPID制御の値を返す（角度）
                                            角速度を渡して（ロボマスの２番目のデータ 配列でいうと[2], [3]番）floatで
                                            処理済みのデータを返す
                 */
-                conv[0].update(C_Data[0].Become(Steer_move.speed(goal)));  
-                conv[1].update(0);
+                Steer_move[0].goal_speed = Controler.Data.L;
+                conv[0].update(C_Data[0].Become(Controler.Data.L));  
+                Steer_move[1].goal_speed = static_cast<float>(goal);
+                conv[1].update(C_Data[1].Become(Steer_move[1].speed(current)));
             } else {
                 printf("KO");
             }
-            printf("%f, %d\n", ((goal / 60.0) * (0.01)), C_Data[0].Become(Steer_move.speed(goal)));         
+            printf("%5d, %5d, %f\n", (C_Data[0].Become(Controler.Data.L)), (C_Data[1].Become(Steer_move[1].speed(current))), Controler.Data.L);         
             ThisThread::sleep_for(10ms);
         } else {
             printf("No");
@@ -91,7 +93,7 @@ int main() {
 }
 
 void Angle_Speed() {
-    // output_current = Steer_move.update(goal);
+    // output_current = Steer_move[0].update(goal);
     
 }
 

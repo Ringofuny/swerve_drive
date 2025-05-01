@@ -37,8 +37,8 @@ float Steer::update(int CAN_Data_Count) { // rpm
 
 float Steer::speed(int rpm) {
     // 速度を制御する予定
-    my_wheels[target].speed = goal_speed; // 10ms 考える（多分かくどPDしてそこから速度の目標値出す）
-    my_wheels[current].speed = (rpm / 60.0) * (0.01); // 10ms
+    my_wheels[target].speed = ((goal_speed != 0) ? ((goal_speed / 60.0) * 0.01) : 0.0); // 10ms 
+    my_wheels[current].speed = ((rpm != 0) ? ((rpm / 60.0) * 0.01) : 0.0); // 10ms
     // 速度
     return PD[1].PID_move(my_wheels[target].speed, my_wheels[current].speed);
 }
