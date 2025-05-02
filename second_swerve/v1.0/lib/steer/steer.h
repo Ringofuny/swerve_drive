@@ -24,7 +24,7 @@ class Steer {
         Steer();
         void SetData(float stX, float stY, float stY_L);
         float update(int CAN_Data_Count); 
-        float speed(int rpm);
+        float speed(int rpm, int goal);
         float normalize_angle(float angle_rad);
         float goal_speed;
     private:    

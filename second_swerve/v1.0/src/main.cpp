@@ -30,7 +30,7 @@ void send_current() {
 
 int main() {
     // canの設定
-    can.frequency(1000000);           // DJI ESCは1Mbps
+    can.frequency(1000000);
     can.mode(CAN::Normal);
     canMsgSend.id = 0x200;            // DJI ESCの制御CAN ID（0x200）
     canMsgSend.len = 8;               // データ長8バイト（4台分）
@@ -50,12 +50,12 @@ int main() {
                 switch (canMsgReceive.id) { // can IDの識別(受信)
                     case 0x201: // ID が 0x201の時
                     // goalは速度の目標値を表す（角度の時は関係ない）
-                    goal = (canMsgReceive.data[2] << 8 | canMsgReceive.data[3]); // データが半分に分けられて送られてくるので合体
+                    goal = (int16_t)((canMsgReceive.data[2] << 8 | canMsgReceive.data[3])); // データが半分に分けられて送られてくるので合体
                     break;
                     
                     case 0x202: // ID が 0x202の時
                     // currentは現在速度を表す（角度の時は関係ない）
-                    current = (canMsgReceive.data[2] << 8 | canMsgReceive.data[3]); // データが半分に分けられて送られてくるので合体
+                    current = (int16_t)((canMsgReceive.data[2] << 8 | canMsgReceive.data[3])); // データが半分に分けられて送られてくるので合体
                     break;
                 }
                 /*
@@ -77,14 +77,14 @@ int main() {
                                            角速度を渡して（ロボマスの２番目のデータ 配列でいうと[2], [3]番）floatで
                                            処理済みのデータを返す
                 */
-                Steer_move[0].goal_speed = Controler.Data.L;
+                // Steer_move[0].goal_speed = Controler.Data.L;
                 conv[0].update(C_Data[0].Become(Controler.Data.L));  
-                Steer_move[1].goal_speed = static_cast<float>(goal);
-                conv[1].update(C_Data[1].Become(Steer_move[1].speed(current)));
+                // Steer_move[1].goal_speed = (goal*1.0);
+                conv[1].update(C_Data[1].Become(Steer_move[1].speed(current, goal)));
             } else {
                 printf("KO");
             }
-            printf("%5d, %5d, %f\n", (C_Data[0].Become(Controler.Data.L)), (C_Data[1].Become(Steer_move[1].speed(current))), Controler.Data.L);         
+            printf("%5d, %5f, %f, %5d\n", (C_Data[0].Become(Controler.Data.L)), ((Steer_move[1].speed(current, goal))), Controler.Data.L, goal);         
             ThisThread::sleep_for(10ms);
         } else {
             printf("No");

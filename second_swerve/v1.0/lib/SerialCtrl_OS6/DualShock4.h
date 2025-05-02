@@ -19,14 +19,14 @@ namespace NITSC
         };
 
         // BUTTON_0 map
-        static constexpr uint8_t UP       = 0x01;
-        static constexpr uint8_t RIGHT    = 0x02;
-        static constexpr uint8_t DOWN     = 0x04;
-        static constexpr uint8_t LEFT     = 0x08;
-        static constexpr uint8_t TRIANGLE = 0x10;
-        static constexpr uint8_t CIRCLE   = 0x20;
-        static constexpr uint8_t CROSS    = 0x40;
-        static constexpr uint8_t SQUARE   = 0x80;
+        static constexpr uint8_t UP       = 0x10;
+        static constexpr uint8_t RIGHT    = 0x20;
+        static constexpr uint8_t DOWN     = 0x40;
+        static constexpr uint8_t LEFT     = 0x80;
+        static constexpr uint8_t TRIANGLE = 0x01;
+        static constexpr uint8_t CIRCLE   = 0x02;
+        static constexpr uint8_t CROSS    = 0x04;
+        static constexpr uint8_t SQUARE   = 0x08;
         
         // BUTTON_1 map
         static constexpr uint8_t L1       = 0x01;

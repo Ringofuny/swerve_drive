@@ -10,7 +10,6 @@ T clamp(T val, T low, T high) {
 float PID::PID_move(float goal, float current)
 {
     error = goal - current;
-    
     sum += error;
     dif = error - error_pre;
 

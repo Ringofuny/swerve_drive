@@ -5,11 +5,13 @@ enum {target, current};
 
 Ctrl my_wheels[2] = {
     // 初期化
-    {0, 0},
-    {0, 0}
+    {0, 0, 0},
+    {0, 0, 0}
 };
 
+
 Steer::Steer() {
+    goal_speed=0.0;
 }
 
 void Steer::SetData(float stX, float stY, float stY_L) {
@@ -35,10 +37,10 @@ float Steer::update(int CAN_Data_Count) { // rpm
     return PD[0].PID_angle(my_wheels[target].angle, my_wheels[current].rad);
 }
 
-float Steer::speed(int rpm) {
+float Steer::speed(int rpm , int goal) {
     // 速度を制御する予定
-    my_wheels[target].speed = ((goal_speed != 0) ? ((goal_speed / 60.0) * 0.01) : 0.0); // 10ms 
-    my_wheels[current].speed = ((rpm != 0) ? ((rpm / 60.0) * 0.01) : 0.0); // 10ms
+    my_wheels[target].speed = (goal / 60.0f) * 0.001f;
+    my_wheels[current].speed = (rpm / 60.0f) * 0.001f;
     // 速度
     return PD[1].PID_move(my_wheels[target].speed, my_wheels[current].speed);
 }

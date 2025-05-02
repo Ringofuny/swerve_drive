@@ -5,13 +5,14 @@
 #endif
 
 #include <stdio.h>
+#include <math.h>
 
 class PID {
     public:  
         PID() {
-            kp = 0.10000225f;   // 応答の速さ
+            kp = 0.20000225f;   // 応答の速さ
             ki = 0.000001f;   // 積分項は最初オフ
-            kd = 0.000018f;   // 減速のための微分項
+            kd = 0.002f;   // 減速のための微分項
             goal = 0.0;
             current = 0.0;
             sum = 0.0;
