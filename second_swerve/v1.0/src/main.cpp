@@ -5,6 +5,7 @@ Conversion::Available_Data C_Data[4];
 
 Ticker my_Ctrl;
 Ticker cansend;
+Ticker speed;
 
 Ctrl Controler;
 
@@ -18,10 +19,14 @@ void send() {
     can.write(canMsgSend);
 }
 
-float constrain(float x, float min_val, float max_val) {
-    if (x < min_val) return min_val;
-    if (x > max_val) return max_val;
-    return x;
+void speed_att() {
+    // Steer_move[0].goal_speed = Controler.Data.L;
+    conv[0].update(C_Data[0].Become(Controler.Data.L));  
+    // Steer_move[1].goal_speed = (goal*1.0);
+    float out = Steer_move[1].speed(current, goal);
+    // kakunin = constrain(out, -1, 1);
+    kakunin = C_Data[1].Become(out);
+    conv[1].update(kakunin);
 }
 
 void send_current() { 
@@ -46,6 +51,7 @@ int main() {
     // PID_in.attach(&Angle_Speed, 10ms); // 1msごとに制御送信
     my_Ctrl.attach(&settingCtrl, 1ms); // ニュートラルの設定（1ms周期）
     cansend.attach(&send_current, 10ms); // can送信データの代入
+    speed.attach(&speed_att, 1ms);
 
     while (1) { // 無限ループ
         if (fep.tryReceive()) { // 通信成功時
@@ -88,17 +94,11 @@ int main() {
                                            角速度を渡して（ロボマスの２番目のデータ 配列でいうと[2], [3]番）floatで
                                            処理済みのデータを返す
                 */
-                // Steer_move[0].goal_speed = Controler.Data.L;
-                conv[0].update(C_Data[0].Become(Controler.Data.L));  
-                // Steer_move[1].goal_speed = (goal*1.0);
-                float out = Steer_move[1].speed(current, goal);
-                kakunin = constrain(out, -1, 1);
-                conv[1].update(C_Data[1].Become(kakunin));
             } else {
                 printf("fail_CAN\n");
             }
 
-            printf("%5d, %5f, %f, %5d\n", (C_Data[0].Become(Controler.Data.L)), (kakunin), Controler.Data.L, goal);
+            printf("%5d, %5f, %5f, %5d, %5d\n", (C_Data[0].Become(Controler.Data.L)), Controler.Data.L, kakunin, current, goal);
             ThisThread::sleep_for(10ms); // 10ms待つ 
         } else {
             printf("No");

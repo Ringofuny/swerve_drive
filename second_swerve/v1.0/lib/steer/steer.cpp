@@ -9,6 +9,12 @@ Ctrl my_wheels[2] = {
     {0, 0, 0}
 };
 
+float constrainf(float x, float a, float b) {
+    if (x < a) return a;
+    else if (x > b) return b;
+    else return x;
+}
+
 
 Steer::Steer() {
     goal_speed=0.0;
@@ -39,8 +45,8 @@ float Steer::update(int CAN_Data_Count) { // rpm
 
 float Steer::speed(int rpm , int goal) {
     // 速度を制御する予定
-    my_wheels[target].speed = (goal / 60.0f) * 0.25f;
-    my_wheels[current].speed = (rpm / 60.0f) * 0.25f;
+    my_wheels[target].speed = (goal / 60.0f) * 0.001;
+    my_wheels[current].speed = (rpm / 60.0f) * 0.001;
     // 速度
     return PD[1].PID_move(my_wheels[target].speed, my_wheels[current].speed);
 }
