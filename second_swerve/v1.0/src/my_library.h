@@ -11,3 +11,4 @@ Neutral ctrl[3]; // 0->RX 1->RY 2->LY
 #include "func.h"
 #include "my_pin.h"
 #include "proto.h"
+#include <math.h>

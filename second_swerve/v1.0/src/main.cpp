@@ -8,12 +8,20 @@ Ticker cansend;
 
 Ctrl Controler;
 
-int goal = 0;
-int current = 0;
+int16_t goal = 0;
+int16_t current = 0;
+
+float kakunin = 0;
 
 void send() {
     // 意味ないけどcan送信の関数（割り込もうと思ったんだけどうまくいかなかった）
     can.write(canMsgSend);
+}
+
+float constrain(float x, float min_val, float max_val) {
+    if (x < min_val) return min_val;
+    if (x > max_val) return max_val;
+    return x;
 }
 
 void send_current() { 
@@ -49,7 +57,10 @@ int main() {
             if (can.read(canMsgReceive)) { // can受信時
                 switch (canMsgReceive.id) { // can IDの識別(受信)
                     case 0x201: // ID が 0x201の時
-                    // goalは速度の目標値を表す（角度の時は関係ない）
+                    /* 
+                        goalは速度の目標値を表す（角度の時は関係ない）
+                        goal = (int16_t) <- これがないと符号が無くなってバグる    
+                    */
                     goal = (int16_t)((canMsgReceive.data[2] << 8 | canMsgReceive.data[3])); // データが半分に分けられて送られてくるので合体
                     break;
                     
@@ -80,12 +91,15 @@ int main() {
                 // Steer_move[0].goal_speed = Controler.Data.L;
                 conv[0].update(C_Data[0].Become(Controler.Data.L));  
                 // Steer_move[1].goal_speed = (goal*1.0);
-                conv[1].update(C_Data[1].Become(Steer_move[1].speed(current, goal)));
+                float out = Steer_move[1].speed(current, goal);
+                kakunin = constrain(out, -1, 1);
+                conv[1].update(C_Data[1].Become(kakunin));
             } else {
-                printf("KO");
+                printf("fail_CAN\n");
             }
-            printf("%5d, %5f, %f, %5d\n", (C_Data[0].Become(Controler.Data.L)), ((Steer_move[1].speed(current, goal))), Controler.Data.L, goal);         
-            ThisThread::sleep_for(10ms);
+
+            printf("%5d, %5f, %f, %5d\n", (C_Data[0].Become(Controler.Data.L)), (kakunin), Controler.Data.L, goal);
+            ThisThread::sleep_for(10ms); // 10ms待つ 
         } else {
             printf("No");
         }
@@ -93,8 +107,7 @@ int main() {
 }
 
 void Angle_Speed() {
-    // output_current = Steer_move[0].update(goal);
-    
+    // output_current = Steer_move[0].update(goal);   
 }
 
 /*------------------------------ニュートラルの設定------------------------------*/
