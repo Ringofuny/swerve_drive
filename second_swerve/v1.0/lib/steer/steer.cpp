@@ -27,18 +27,20 @@ void Steer::SetData(float stX, float stY, float stY_L) {
     L = stY_L;
 }
 
-float Steer::update(int CAN_Data_Count) { // rpm
+float Steer::update(int CAN_Data_Count, float angle) { // rpm
     /*-- 一番重要でPID制御の値を返す（角度）
             角速度を渡して（ロボマスの２番目のデータ 配列でいうと[2], [3]番）floatで
             処理済みのデータを返す */
     // 目標の角度
-    X[1] = X[0];
-    Y[1] = Y[0];
-    my_wheels[target].angle = atan2f(Y[1], X[1]); // 
-    
+    my_wheels[target].angle = angle; // 
+
     // 現在の角度
-    my_wheels[current].angle += ((2 * M_PI) * (CAN_Data_Count / 60.0)) * (0.01); // 
-    my_wheels[current].rad = normalize_angle(my_wheels[current].angle);
+    // my_wheels[current].angle += ((2 * M_PI) * (CAN_Data_Count / 60.0)); // 
+    // my_wheels[current].rad = ((2 * M_PI / 8192.0) * -CAN_Data_Count) - M_PI;
+    float rad = (2.0f * M_PI * CAN_Data_Count / 8192.0f);  // 0〜2π
+    rad = fmodf(rad + M_PI, 2.0f * M_PI) - M_PI;         // -π〜π に正規化
+    // my_wheels[current].rad = -angle;                         // 符号反転が必要ならここで
+
     
     return PD[0].PID_angle(my_wheels[target].angle, my_wheels[current].rad);
 }

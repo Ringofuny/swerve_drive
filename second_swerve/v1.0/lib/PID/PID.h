@@ -10,9 +10,9 @@
 class PID {
     public:  
         PID() {
-            kp = 0.3f;   // 応答の速さ
-            ki = 0.00001f;   // 積分項は最初オフ
-            kd = 0.01f;   // 減速のための微分項
+            kp = 5.16f;  
+            ki = 0.0000199f;   
+            kd = 0.0f;   
             goal = 0.0;
             current = 0.0;
             sum = 0.0;

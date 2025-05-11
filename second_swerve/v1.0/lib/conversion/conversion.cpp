@@ -14,12 +14,12 @@ int16_t Conversion::Available_Data::Become(double Current) {
         -10(A) ~ 10(A) を -16384 ~ 16384 の間のデータに変換 */
         // double scaled = (Current / 10) * 16384.0;
 
-    double scaled = (Current) * 16384.0;
+    double scaled = (Current) * 4000;
     int32_t calc = static_cast<int32_t>(std::round(scaled));
 
     // クリッピング
-    if (calc > 16384) calc = 16384;
-    if (calc < -16384) calc = -16384;
+    if (calc > 16384) calc = 4000;
+    if (calc < -16384) calc = -4000;
 
     Result = static_cast<int16_t>(calc);
     return Result;

@@ -23,7 +23,7 @@ class Steer {
     public:
         Steer();
         void SetData(float stX, float stY, float stY_L);
-        float update(int CAN_Data_Count); 
+        float update(int CAN_Data_Coun, float angle); 
         float speed(int rpm, int goal);
         float normalize_angle(float angle_rad);
         float goal_speed;
