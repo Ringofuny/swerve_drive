@@ -1,4 +1,5 @@
 #include "conversion.h"
+#include <functional>
 #include <math.h>
 
 void Conversion::Send_Data::update(int16_t Strength) {
@@ -14,14 +15,26 @@ int16_t Conversion::Available_Data::Become(double Current) {
         -10(A) ~ 10(A) を -16384 ~ 16384 の間のデータに変換 */
         // double scaled = (Current / 10) * 16384.0;
 
-    double scaled = (Current) * 4000;
-    int32_t calc = static_cast<int32_t>(std::round(scaled));
+    double scaled = (Current) * 4000.0;
+    int32_t this_calc = static_cast<int32_t>((scaled));
 
     // クリッピング
-    if (calc > 16384) calc = 4000;
-    if (calc < -16384) calc = -4000;
+    if (this_calc > 4000) this_calc = 4000;
+    if (this_calc < -4000) this_calc = -4000;
 
-    Result = static_cast<int16_t>(calc);
+    Result = static_cast<int16_t>(this_calc);
+    return Result;
+}
+
+int16_t Conversion::Available_Data::Become_Angle(double Current) {
+    double scaled = (Current) * 550.0;
+    int32_t this_calc = static_cast<int32_t>(scaled);
+
+    // クリッピング
+    if (this_calc > 550) this_calc = 550;
+    if (this_calc < -550) this_calc = -550;
+
+    Result = static_cast<int16_t>(this_calc);
     return Result;
 }
 

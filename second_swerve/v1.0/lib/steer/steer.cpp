@@ -37,12 +37,13 @@ float Steer::update(int CAN_Data_Count, float angle) { // rpm
     // 現在の角度
     // my_wheels[current].angle += ((2 * M_PI) * (CAN_Data_Count / 60.0)); // 
     // my_wheels[current].rad = ((2 * M_PI / 8192.0) * -CAN_Data_Count) - M_PI;
-    float rad = (2.0f * M_PI * CAN_Data_Count / 8192.0f);  // 0〜2π
-    rad = fmodf(rad + M_PI, 2.0f * M_PI) - M_PI;         // -π〜π に正規化
+    my_wheels[current].rad = (2.0f * M_PI * CAN_Data_Count / (6.0f * 8192.0f));  // 0〜2π
+    my_wheels[current].rad = remainderf(my_wheels[current].rad, 2.0f * M_PI);   
+    if (my_wheels[current].rad == M_PI) my_wheels[current].rad = -M_PI;      // -π〜π に正規化
     // my_wheels[current].rad = -angle;                         // 符号反転が必要ならここで
 
     
-    return PD[0].PID_angle(my_wheels[target].angle, my_wheels[current].rad);
+    return PD[0].P_move(my_wheels[target].angle, my_wheels[current].rad);
 }
 
 float Steer::speed(int rpm , int goal) {

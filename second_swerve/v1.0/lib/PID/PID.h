@@ -11,8 +11,8 @@ class PID {
     public:  
         PID() {
             kp = 5.16f;  
-            ki = 0.0000199f;   
-            kd = 0.0f;   
+            ki = 0.0000194f;   
+            kd = 0.000000f;   
             goal = 0.0;
             current = 0.0;
             sum = 0.0;

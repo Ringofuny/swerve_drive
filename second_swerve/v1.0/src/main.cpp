@@ -10,25 +10,28 @@ Ticker speed;
 
 Ctrl Controler;
 
-Daikei my_daikei[2];
+Daikei my_daikei[3];
 
 int16_t goal = 0;
 int16_t current = 0;
 
-float angle = 0;
-double out = 0;
+float angle = 0.0;
+float out = 0.0;
 
-int16_t kakunin = 0;
+int16_t kakunin[2] = {0, 0};
 
-int16_t output = 0;
+int16_t output[2] = {0, 0};
 
 void SetDaikei() {
-    my_daikei[0].setDeltaPerSecond(2.1);
+    my_daikei[0].setDeltaPerSecond(2.22);
     my_daikei[0].setMinMax(-1.0, 1.0);
     my_daikei[0].setTolerance(0.01);
-    my_daikei[1].setDeltaPerSecond(2.1);
+    my_daikei[1].setDeltaPerSecond(2.22);
     my_daikei[1].setMinMax(-1.0, 1.0);
     my_daikei[1].setTolerance(0.01);
+    my_daikei[2].setDeltaPerSecond(2.5);
+    my_daikei[2].setMinMax(-1.0, 1.0);
+    my_daikei[2].setTolerance(0.0019);
 }
 
 void send() {
@@ -60,17 +63,22 @@ void rise_fall() {
 }
 
 void speed_att() {
-    // Steer_move[0][0].goal_speed = Controler.Data.L;
-    my_daikei[0].setTarget(Controler.Data.L + (Steer_move[1][1].update(enc.enc_count, angle)));
-    output = C_Data[0].Become((my_daikei[0].update()));
-    // Steer_move[1][0].goal_speed = (goal*1.0);
-    out = static_cast<double>(Steer_move[1][0].speed(current, goal));
-    // kakunin = constrain(out, -1, 1);
-    // C_Data[1].Become(out) + 
-    my_daikei[1].setTarget(out);
-    kakunin = C_Data[1].Become((my_daikei[1].update()));
-    conv[0].update(output);  
-    conv[1].update(kakunin); 
+    if (Controler.Data.L != 0.0) {
+        my_daikei[0].setTarget(Controler.Data.L);
+        output[0] = C_Data[0].Become((my_daikei[0].update()));
+        out = (Steer_move[1][0].speed(current, goal < 0 ? (fabs(goal)) : -goal));
+        my_daikei[1].setTarget(static_cast<double>(out));
+        kakunin[0] = C_Data[1].Become((my_daikei[1].update()));
+        conv[0].update(output[0]);  
+        conv[1].update(kakunin[0]); 
+    } else {
+        // 目標の角度
+        angle = atan2f(Controler.Data.R[1], Controler.Data.R[0]); // 
+        my_daikei[2].setTarget(Steer_move[0][0].update(enc.enc_count, angle));
+        output[1] = kakunin[1] = C_Data[2].Become_Angle(my_daikei[2].update());
+        conv[0].update(output[1]);  
+        conv[1].update(kakunin[1]); 
+    }
 }
 
 void send_current() { 
@@ -95,7 +103,7 @@ int main() {
     canMsgSend.len = 8;               // データ長8バイト（4台分）
     for (int i = 0; i < 8; i++) canMsgSend.data[i] = 0; // 初期化
     // PID_in.attach(&Angle_Speed, 10ms); // 1msごとに制御送信
-    my_Ctrl.attach(&settingCtrl, 100us); // ニュートラルの設定（1ms周期）
+    my_Ctrl.attach(&settingCtrl, 1ms); // ニュートラルの設定（1ms周期）
     cansend.attach(&send_current, 10ms); // can送信データの代入
     speed.attach(&speed_att, 100us);
 
@@ -144,7 +152,11 @@ int main() {
                 // printf("fail_CAN\n");
             }
 
-            printf("%5f, %5d, %5d, %5d, %5d, %5d\n", (out), (kakunin) ,output, current, goal, enc.enc_count);
+            float rad = (2.0f * M_PI * enc.enc_count / 8192.0f);  // 0〜2π
+            rad = remainderf(rad, 2.0f * M_PI);  
+            if (rad == M_PI) rad = -M_PI;                 // -π〜π に正規化
+
+            printf("%5d, %5f, %5f, %5d, %5d, %5f\n", (output[0]), (angle) ,(my_daikei[2].update()), current, goal, rad);
             ThisThread::sleep_for(10ms); // 10ms待つ 
         } else {
             // printf("No");
@@ -164,10 +176,6 @@ void settingCtrl() {
     Controler.Data.R[0] = ctrl[0].setNeutral(fep.getData(DualShock4::RX));
     //Y 
     Controler.Data.R[1] = ctrl[1].setNeutral(fep.getData(DualShock4::RY));
-
-    // 目標の角度
-    angle = atan2f(Controler.Data.R[1], Controler.Data.R[0]); // 
-
     //L
     Controler.Data.L = ctrl[2].setNeutral(fep.getData(DualShock4::LY));
 }

@@ -9,9 +9,10 @@ namespace Conversion {
     };
 
     struct Available_Data {
-        int16_t Become(double Current); 
+        int16_t Become(double Current);
+        int16_t Become_Angle(double Current); 
         private:
-            int Result;
+            int16_t Result;
             double calc;
     };
 } // namespace Conversion

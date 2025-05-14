@@ -21,14 +21,13 @@ float PID::PID_move(float goal, float current)
 }
 
 float PID::PID_angle(float goal, float current) {
-    float error = goal - current;
-    error = normalize_angle(error);  // ← ここでラップ補正する！
+//    error = goal - current;
+//     sum += error;
+//     dif = error - error_pre;
 
-    sum += error;
-    dif = error - error_pre;
+//     out = (error * kp) + (sum * ki) + (dif * kd);
 
-    out = (error * kp) + (sum * ki) + (dif * kd);
-    error_pre = error;
+//     error_pre = error;
 
     return out;
 }
@@ -58,11 +57,10 @@ float PID::PD_angle(int goal, int current) {
 
 float PID::P_move(float goal, float current) {
     error = goal - current;
-    if (error > 4096) error -= 8192;
-    if (error < -4096) error += 8192;
+    // 角度誤差を -π〜π に正規化
+    error = remainderf(error, 2.0f * M_PI);
 
-    out = (error * kp);
-
+    out = (error * 0.5f);
     return out;
 }
 
