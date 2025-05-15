@@ -6,7 +6,7 @@
 [PID](../lib/PID)
 
 - PID制御の式が入ってる
-- 汚いけど .h ファイルでゲイン調整
+- ~汚いけど .h ファイルでゲイン調整~
 
 ## SerialCtrl_OS6
 [SerialCtrl_OS6](../lib/SerialCtrl_OS6)
