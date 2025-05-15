@@ -2,7 +2,8 @@
 
 これはこれはｻﾄﾞｳｽﾃｱを動かす時に使うために作った関数が入ってるよ
 
-[## PID](second_swerve/v1.0/lib/PID)
+## PID
+[PID](second_swerve/v1.0/lib/PID)
 
 - PID制御の式が入ってる
 - 汚いけど .h ファイルでゲイン調整
