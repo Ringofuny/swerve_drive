@@ -27,6 +27,7 @@ class Steer {
         float speed(int rpm, int goal);
         float normalize_angle(float angle_rad);
         float goal_speed;
+        float kp[2], ki[2], kd[2];
     private:    
         float X[3];
         float Y[3];

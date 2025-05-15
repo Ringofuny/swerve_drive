@@ -19,19 +19,18 @@ float angle = 0.0;
 float out = 0.0;
 
 int16_t kakunin[2] = {0, 0};
-
 int16_t output[2] = {0, 0};
 
 void SetDaikei() {
-    my_daikei[0].setDeltaPerSecond(2.22);
+    my_daikei[0].setDeltaPerSecond(1.2);
     my_daikei[0].setMinMax(-1.0, 1.0);
-    my_daikei[0].setTolerance(0.01);
-    my_daikei[1].setDeltaPerSecond(2.22);
+    my_daikei[0].setTolerance(0.001);
+    my_daikei[1].setDeltaPerSecond(1.6);
     my_daikei[1].setMinMax(-1.0, 1.0);
-    my_daikei[1].setTolerance(0.01);
+    my_daikei[1].setTolerance(0.001);
     my_daikei[2].setDeltaPerSecond(2.5);
     my_daikei[2].setMinMax(-1.0, 1.0);
-    my_daikei[2].setTolerance(0.0019);
+    my_daikei[2].setTolerance(0.00212);
 }
 
 void send() {
@@ -63,22 +62,22 @@ void rise_fall() {
 }
 
 void speed_att() {
-    if (Controler.Data.L != 0.0) {
         my_daikei[0].setTarget(Controler.Data.L);
         output[0] = C_Data[0].Become((my_daikei[0].update()));
-        out = (Steer_move[1][0].speed(current, goal < 0 ? (fabs(goal)) : -goal));
-        my_daikei[1].setTarget(static_cast<double>(out));
-        kakunin[0] = C_Data[1].Become((my_daikei[1].update()));
-        conv[0].update(output[0]);  
-        conv[1].update(kakunin[0]); 
-    } else {
-        // 目標の角度
+        my_daikei[1].setTarget(Steer_move[0][0].update(enc.enc_count, 0.0));
+        kakunin[0] = my_daikei[1].update();
+        float put = (output[0] - fabs(kakunin[0]));
+        conv[0].update(put);  
+        conv[1].update(-(put)); 
+        /*
+        //* 目標の角度
+        my_daikei[0].setTarget(Controler.Data.L);
         angle = atan2f(Controler.Data.R[1], Controler.Data.R[0]); // 
         my_daikei[2].setTarget(Steer_move[0][0].update(enc.enc_count, angle));
         output[1] = kakunin[1] = C_Data[2].Become_Angle(my_daikei[2].update());
-        conv[0].update(output[1]);  
-        conv[1].update(kakunin[1]); 
-    }
+        conv[0].update(output[1]);
+        conv[1].update((kakunin[1])); 
+        */
 }
 
 void send_current() { 
@@ -105,13 +104,32 @@ int main() {
     // PID_in.attach(&Angle_Speed, 10ms); // 1msごとに制御送信
     my_Ctrl.attach(&settingCtrl, 1ms); // ニュートラルの設定（1ms周期）
     cansend.attach(&send_current, 10ms); // can送信データの代入
-    speed.attach(&speed_att, 100us);
+    speed.attach(&speed_att, 1ms);
+
+    // 速度のPIDゲイン
+    Steer_move[0][0].kp[1] = 5.16f;
+    Steer_move[0][0].ki[1] = 0.0000194f;
+    Steer_move[0][0].kd[1] = 0.0f;
+    
+    Steer_move[1][0].kp[1] = 5.16f;
+    Steer_move[1][0].ki[1] = 0.0000194f;
+    Steer_move[1][0].kd[1] = 0.0f;
+    
+    // 角度のPIDゲイン
+    Steer_move[0][0].kp[0] = 5.0f;
+    Steer_move[0][0].ki[0] = 0.0f;
+    Steer_move[0][0].kd[0] = 0.0f;
+
+    Steer_move[1][0].kp[0] = 5.0f;
+    Steer_move[1][0].ki[0] = 0.0f;
+    Steer_move[1][0].kd[0] = 0.0f;
 
     while (1) { // 無限ループ
         if (fep.tryReceive()) { // 通信成功時
             // 関数に加工済みのコントローラーのデータを送る
             Steer_move[0][0].SetData(Controler.Data.R[0], Controler.Data.R[1], Controler.Data.L);
             Steer_move[1][0].SetData(Controler.Data.R[0], Controler.Data.R[1], Controler.Data.L);
+
             // send_current();
             send(); // canの送信（コードのどこでやるべきなんだろう）
             if (can.read(canMsgReceive)) { // can受信時
@@ -156,7 +174,7 @@ int main() {
             rad = remainderf(rad, 2.0f * M_PI);  
             if (rad == M_PI) rad = -M_PI;                 // -π〜π に正規化
 
-            printf("%5d, %5f, %5f, %5d, %5d, %5f\n", (output[0]), (angle) ,(my_daikei[2].update()), current, goal, rad);
+            printf("%5f, %5d, %5f, %5f, %5d, %5f\n", (my_daikei[1].update()), (output[0]) ,(my_daikei[2].update()), Controler.Data.L, goal, rad);
             ThisThread::sleep_for(10ms); // 10ms待つ 
         } else {
             // printf("No");

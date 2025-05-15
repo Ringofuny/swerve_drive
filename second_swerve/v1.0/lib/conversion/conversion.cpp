@@ -27,12 +27,12 @@ int16_t Conversion::Available_Data::Become(double Current) {
 }
 
 int16_t Conversion::Available_Data::Become_Angle(double Current) {
-    double scaled = (Current) * 550.0;
+    double scaled = (Current) * 600.0;
     int32_t this_calc = static_cast<int32_t>(scaled);
 
     // クリッピング
-    if (this_calc > 550) this_calc = 550;
-    if (this_calc < -550) this_calc = -550;
+    if (this_calc > 600) this_calc = 600;
+    if (this_calc < -600) this_calc = -600;
 
     Result = static_cast<int16_t>(this_calc);
     return Result;

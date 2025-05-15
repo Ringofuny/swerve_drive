@@ -2,6 +2,7 @@
 PID PD[2];
 
 enum {target, current};
+enum {for_angle, for_speed};
 
 Ctrl my_wheels[2] = {
     // 初期化
@@ -15,9 +16,15 @@ float constrainf(float x, float a, float b) {
     else return x;
 }
 
-
 Steer::Steer() {
     goal_speed=0.0;
+    PD[for_speed].kp = kp[for_speed];
+    PD[for_speed].ki = ki[for_speed];   
+    PD[for_speed].kd = kd[for_speed];   
+    
+    PD[for_angle].kp = kp[for_angle];
+    PD[for_angle].ki = ki[for_angle];  
+    PD[for_angle].kd = kd[for_angle];  
 }
 
 void Steer::SetData(float stX, float stY, float stY_L) {
@@ -42,8 +49,7 @@ float Steer::update(int CAN_Data_Count, float angle) { // rpm
     if (my_wheels[current].rad == M_PI) my_wheels[current].rad = -M_PI;      // -π〜π に正規化
     // my_wheels[current].rad = -angle;                         // 符号反転が必要ならここで
 
-    
-    return PD[0].P_move(my_wheels[target].angle, my_wheels[current].rad);
+    return PD[for_angle].P_move(my_wheels[target].angle, my_wheels[current].rad);
 }
 
 float Steer::speed(int rpm , int goal) {
@@ -51,7 +57,7 @@ float Steer::speed(int rpm , int goal) {
     my_wheels[target].speed = (goal / 60.0f) * 0.001;
     my_wheels[current].speed = (rpm / 60.0f) * 0.001;
     // 速度
-    return PD[1].PID_move(my_wheels[target].speed, my_wheels[current].speed);
+    return PD[for_speed].PID_move(my_wheels[target].speed, my_wheels[current].speed);
 }
 
 float Steer::normalize_angle(float angle_rad) {

@@ -30,10 +30,10 @@ class PID {
         float PD_speed_angle(float g_angle, float c_angle, float g_speed, float c_speed);
         float normalize_angle(float angle_rad);
         float PID_angle(float goal, float current);
-    private:
         float kp;
         float ki;
         float kd;
+    private:
         float goal;
         float current;
         float sum;
