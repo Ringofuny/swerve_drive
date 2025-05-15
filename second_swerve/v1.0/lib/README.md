@@ -9,10 +9,12 @@
 - 汚いけど .h ファイルでゲイン調整
 
 ## SerialCtrl_OS6
+[SerialCtrl_OS6](../lib/SerialCtrl_OS6)
 
 - これはすごい方が書いたPS4コントローラとの通信プログラム
 
 ## conversion
+[conversion](../lib/conversion)
 
 - データを送信できる形にする関数（半分に分ける）
   ex) [ 1001 0010 1111 1100 ] の時 [ 1001 0010 ](上位バイト)と[ 1111 1100 ](下位バイト)に分けて
@@ -22,6 +24,7 @@
   -10(A) ~ 10(A) を -16384 ~ 16384 の間のデータに変換する関数
 
 ## daikei
+[daikei](../lib/daikei)
 
 - 2024のロボコンで先輩に描いてもらった台形制御のライブラリをArduinoからF446reで使えるようにした
 
@@ -30,19 +33,23 @@
 - 今のところいらないので後で消すかも
 
 ## mills
+[millis](../lib/millis)
 
 - daikeiを使う際にArduinoのmills関数を使いたかったので自作した
 
 ## my_encoder
+[my_encoder](../lib/my_encoder)
 
 - エンコーダを読む際に呼び出す関数でmainに書くと長い
 
 ## neutral
+[neutral](../lib/neutral)
 
 - コントローラの値を調整して返す
 - -1~0~1の間で返す
 
 ## steer 
+[steer](../lib/steer)
 
 - １番の要
 - PIDを呼び出して計算を行う
