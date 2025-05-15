@@ -1,6 +1,6 @@
 # 目次
-[PID_move](## PID_move)
-[P_move](## P_move)
+- [PID_move](##PID_move)
+- [P_move](##P_move)
 
 ## PID_move
 - これはシンプルにPID制御をするよ
