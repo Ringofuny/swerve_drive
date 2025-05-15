@@ -62,22 +62,20 @@ void rise_fall() {
 }
 
 void speed_att() {
-        my_daikei[0].setTarget(Controler.Data.L);
-        output[0] = C_Data[0].Become((my_daikei[0].update()));
-        my_daikei[1].setTarget(Steer_move[0][0].update(enc.enc_count, 0.0));
-        kakunin[0] = my_daikei[1].update();
-        float put = (output[0] - fabs(kakunin[0]));
-        conv[0].update(put);  
-        conv[1].update(-(put)); 
-        /*
-        //* 目標の角度
-        my_daikei[0].setTarget(Controler.Data.L);
-        angle = atan2f(Controler.Data.R[1], Controler.Data.R[0]); // 
-        my_daikei[2].setTarget(Steer_move[0][0].update(enc.enc_count, angle));
-        output[1] = kakunin[1] = C_Data[2].Become_Angle(my_daikei[2].update());
-        conv[0].update(output[1]);
-        conv[1].update((kakunin[1])); 
-        */
+    my_daikei[0].setTarget(Controler.Data.L);
+    output[0] = C_Data[0].Become((my_daikei[0].update()));
+
+    angle = atan2f(Controler.Data.R[1], Controler.Data.R[0]);
+    angle = fabs(angle) < 0.1 ? 0.0 : angle;
+
+    // my_daikei[1].setTarget(Steer_move[0][0].update(enc.enc_count, 0.0)); // 速度をあわせるだけ
+    my_daikei[1].setTarget(Steer_move[0][0].update(enc.enc_count, angle)); // 角度追従?
+
+    kakunin[0] = my_daikei[1].update();
+    float put = (output[0] - fabs(kakunin[0]));
+    
+    conv[0].update(put);  
+    conv[1].update(-(put)); 
 }
 
 void send_current() { 
